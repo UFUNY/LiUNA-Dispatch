@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dispatch Map</title>
+  <link rel="stylesheet" href="../css/dispatch.css" />
+  <!-- Prevent caching of protected page -->
+  <meta http-equiv="cache-control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  <script>
+    // Session guard + idle timeout + BFCache protection
+    (function(){
+      const IS_LOCAL = ['localhost','127.0.0.1','::1'].includes(location.hostname);
+      const SESSION_KEY='SESSION', IDLE_MS=30*60*1000;
+      function getS(){ try{const r=sessionStorage.getItem(SESSION_KEY);return r?JSON.parse(r):null;}catch(e){return null;} }
+      function saveS(s){ try{sessionStorage.setItem(SESSION_KEY, JSON.stringify(s));}catch(e){} }
+  function toLogin(msg){ try{ if(msg) sessionStorage.setItem('LAST_LOGOUT_REASON', msg);}catch(e){} location.replace('../index.html'); }
+      function guard(){
+        const s=getS();
+        if(!s||!s.user||Date.now()-(s.lastActivity||0)>IDLE_MS){
+          if (IS_LOCAL) {
+            try { sessionStorage.setItem(SESSION_KEY, JSON.stringify({ user: { name: 'Local Dev' }, lastActivity: Date.now() })); } catch(e) {}
+            return true;
+          }
+          try{sessionStorage.removeItem(SESSION_KEY);}catch(e){}
+          toLogin('Session expired.');
+          return false;
+        }
+        s.lastActivity=Date.now(); saveS(s); return true;
+      }
+      // Expose logout that replaces history entry
+      window.logout=function(r){
+        try{sessionStorage.removeItem(SESSION_KEY);}catch(e){}
+        toLogin(r||'Signed out.');
+      };
+
+      // Opt out of BFCache so back button causes a fresh load
+      window.addEventListener('unload', function(){});
+
+      // Run guard ASAP
+      if(!guard()) return;
+
+      // Idle timer
+      setInterval(()=>{ const s=getS(); if(!s||Date.now()-(s.lastActivity||0)>IDLE_MS) window.logout('Session expired due to inactivity.'); }, 60_000);
+
+      // Activity bump
+      const bump=()=>{ const s=getS(); if(!s) return; s.lastActivity=Date.now(); saveS(s); };
+      ['click','keydown','mousemove','scroll','touchstart','focus'].forEach(ev=>addEventListener(ev,bump,{passive:true}));
+
+      // On any pageshow (from BFCache or not), redirect if session missing
+      addEventListener('pageshow', e=>{
+        if (IS_LOCAL) return;
+        const raw=sessionStorage.getItem(SESSION_KEY);
+        if(!raw) toLogin();
+      });
+    })();
+  </script>
+</head>
+<body>
+  <div id="container">
+    <!-- Sidebar (resizable, min 30%) -->
+    <aside id="sidebar">
+      <nav id="top-bar">
+  <button id="home-btn" onclick="window.location.href='../index.html'">Home</button>
+        <div id="controls">
+          <input type="text" id="search" placeholder="Search Jobs…" />
+          <button id="add-btn">+</button>
+        </div>
+      </nav>
+
+<!-- New Job Form (hidden by default) -->
+<div id="new-job-form" style="display:none; margin-bottom:1rem; padding:1rem; border:1px solid #ccc; border-radius:8px; background:#f9f9f9;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+    <h3 style="margin:0;">Add New Job</h3>
+    <button id="exit-form-btn" style="background:#dc3545; color:white; border:none; padding:0.25rem 0.5rem; border-radius:4px; cursor:pointer;">✕</button>
+  </div>
+  
+  <div style="margin-bottom:0.75rem;">
+    <label style="display:block; margin-bottom:0.25rem; font-weight:bold;">Job Name *</label>
+    <input
+      type="text"
+      id="new-job-input"
+      placeholder="Enter job name"
+      style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px;"
+    />
+  </div>
+  
+  <div style="margin-bottom:0.75rem;">
+    <label style="display:block; margin-bottom:0.25rem; font-weight:bold;">Job Description</label>
+    <textarea
+      id="job-description"
+      placeholder="Enter job description"
+      style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px; height:60px; resize:vertical;"
+    ></textarea>
+  </div>
+  
+  <div style="margin-bottom:0.75rem;">
+    <label style="display:block; margin-bottom:0.25rem; font-weight:bold;">Job Address</label>
+    <input
+      type="text"
+      id="job-address"
+      placeholder="Enter job address (e.g., 123 Main St, Los Angeles, CA)"
+      style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px;"
+    />
+  </div>
+  
+  <div style="margin-bottom:0.75rem;">
+    <label style="display:block; margin-bottom:0.25rem; font-weight:bold;">Manual Coordinates (Optional)</label>
+    <div style="display:flex; gap:0.5rem;">
+      <input
+        type="number"
+        id="job-lat"
+        placeholder="Latitude"
+        step="any"
+        style="flex:1; padding:0.5rem; border:1px solid #ccc; border-radius:4px;"
+      />
+      <input
+        type="number"
+        id="job-lng"
+        placeholder="Longitude"
+        step="any"
+        style="flex:1; padding:0.5rem; border:1px solid #ccc; border-radius:4px;"
+      />
+    </div>
+    <small style="color:#666; font-size:12px;">Use if address lookup fails</small>
+  </div>
+  
+  <div style="margin-bottom:0.75rem;">
+    <label style="display:block; margin-bottom:0.25rem; font-weight:bold;">Start Time</label>
+    <input
+      type="datetime-local"
+      id="job-start-time"
+      style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px;"
+    />
+  </div>
+  
+  <div style="margin-bottom:0.75rem;">
+    <label style="display:block; margin-bottom:0.25rem; font-weight:bold;">Client Information</label>
+    <input
+      type="text"
+      id="client-name"
+      placeholder="Client/General Contractor Name"
+      style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px; margin-bottom:0.5rem;"
+    />
+    <input
+      type="text"
+      id="client-phone"
+      placeholder="Phone Number"
+      style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px; margin-bottom:0.5rem;"
+    />
+    <input
+      type="email"
+      id="client-email"
+      placeholder="Email Address"
+      style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px;"
+    />
+  </div>
+  
+  <div style="margin-bottom:0.75rem;">
+    <label style="display:block; margin-bottom:0.25rem; font-weight:bold;">Job Scope</label>
+    <textarea
+      id="job-scope"
+      placeholder="Enter job scope"
+      style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px; height:60px; resize:vertical;"
+    ></textarea>
+  </div>
+  
+  <div style="margin-bottom:1rem;">
+    <label style="display:block; margin-bottom:0.25rem; font-weight:bold;">Employees</label>
+    <button id="add-employee-btn" style="background:#28a745; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; margin-bottom:0.5rem;">+ Add Employee</button>
+    <div id="employees-list" style="min-height:40px; border:1px solid #ddd; border-radius:4px; padding:0.5rem; background:white;">
+      <p style="margin:0; color:#666; font-style:italic;">No employees added yet</p>
+    </div>
+  </div>
+  
+  <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
+    <button id="cancel-job-btn" style="background:#6c757d; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">Cancel</button>
+    <button id="create-job-btn" style="background:#007bff; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">Save Job</button>
+  </div>
+</div>
+  
+    
+
+
+      <!-- Job Details View (hidden by default) -->
+      <div id="job-details" style="display:none;">
+  <div class="details-header">
+    <button id="back-btn">← Back</button>
+    <h2 id="job-title"></h2>
+  </div>
+  
+  <div class="details-content">
+    <div class="detail-item">
+      <label>Job Name</label>
+      <input type="text" id="edit-job-name" />
+    </div>
+    
+    <div class="detail-item">
+      <label>Job Description</label>
+      <textarea id="edit-description" placeholder="Job description"></textarea>
+    </div>
+    
+    <div class="detail-item">
+      <label>Job Address</label>
+      <input type="text" id="edit-address" placeholder="Job address" />
+    </div>
+    
+    <div class="detail-item">
+      <label>Start Time</label>
+      <input type="datetime-local" id="edit-start-time" />
+    </div>
+    
+    <div class="detail-item">
+      <label>Client Information</label>
+      <input type="text" id="edit-client-name" placeholder="Client/General Contractor Name" />
+      <input type="text" id="edit-client-phone" placeholder="Phone Number" />
+      <input type="email" id="edit-client-email" placeholder="Email Address" />
+    </div>
+    
+    <div class="detail-item">
+      <label>Location Coordinates</label>
+      <input type="text" id="edit-lat" placeholder="Latitude" />
+      <input type="text" id="edit-lng" placeholder="Longitude" />
+    </div>
+    
+    <div class="detail-item">
+      <label>Scope</label>
+      <textarea id="edit-scope" placeholder="Job scope"></textarea>
+    </div>
+    
+    <div class="detail-item">
+      <label>Job Status</label>
+      <div style="display:flex; gap:1rem; margin-top:0.5rem;">
+        <button id="set-active-btn" class="status-btn active" style="background:#28a745; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">Active</button>
+        <button id="set-inactive-btn" class="status-btn inactive" style="background:#dc3545; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">Inactive</button>
+      </div>
+    </div>
+    
+    <div class="detail-item">
+      <label>Employees</label>
+      <button id="add-employee-edit-btn" style="background:#28a745; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer; margin-bottom:0.5rem;">+ Add Employee</button>
+      <div id="edit-employees-list" class="employees-display">
+        <p style="margin:0; color:#666; font-style:italic;">No employees assigned</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="details-actions">
+    <button id="save-job-btn">Save Changes</button>
+    <button id="delete-job-btn" class="danger">Delete</button>
+  </div>
+</div>
+
+<!-- Job Lists with Dropdowns -->
+<div id="job-lists-container">
+  <!-- Active Jobs Section -->
+  <div class="job-section">
+    <div class="job-section-header" onclick="toggleJobSection('active')">
+      <h3>Active Jobs</h3>
+      <div class="header-right">
+        <span class="job-count" id="active-count">0</span>
+        <span class="dropdown-arrow" id="active-arrow">▼</span>
+      </div>
+    </div>
+    <div class="job-section-content" id="active-jobs-list">
+      <!-- Active jobs will be populated here -->
+    </div>
+  </div>
+
+  <!-- Inactive Jobs Section -->
+  <div class="job-section">
+    <div class="job-section-header" onclick="toggleJobSection('inactive')">
+      <h3>Inactive Jobs</h3>
+      <div class="header-right">
+        <span class="job-count" id="inactive-count">0</span>
+        <span class="dropdown-arrow" id="inactive-arrow">▼</span>
+      </div>
+    </div>
+    <div class="job-section-content" id="inactive-jobs-list">
+      <!-- Inactive jobs will be populated here -->
+    </div>
+  </div>
+</div>
+
+    </aside>
+
+    <!-- Resizable Divider -->
+    <div id="resizer"></div>
+
+    <!-- Map Pane (resizable, min 40%) -->
+    <main id="map"></main>
+  </div>
+
+  <div id="notification" style="display:none;" class="notification"></div>
+
+  <!-- Employee Picker Modal -->
+  <div id="employee-picker-overlay" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.5); z-index:1000;">
+    <div id="employee-picker-modal" style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); width:min(720px, 92vw); max-height:80vh; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.2); display:flex; flex-direction:column;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:0.75rem 1rem; border-bottom:1px solid #e2e8f0;">
+        <h3 style="margin:0; font-size:18px; color:#0F172A;">Select Employee</h3>
+        <button id="employee-picker-close" style="background:#e2e8f0; border:none; border-radius:6px; padding:0.25rem 0.5rem; cursor:pointer;">✕</button>
+      </div>
+      <div style="padding:0.75rem 1rem; border-bottom:1px solid #f1f5f9; display:flex; gap:0.5rem; align-items:center;">
+        <input type="text" id="employee-picker-search" placeholder="Search by name, classification, or phone" style="flex:1; padding:0.5rem 0.75rem; border:1px solid #cbd5e1; border-radius:6px;" />
+        <small style="color:#64748b;">Showing active employees only</small>
+      </div>
+      <div id="employee-picker-list" style="padding:0.5rem 1rem 1rem; overflow:auto;"></div>
+    </div>
+  </div>
+
+  <script src="../js/dispatch.js"></script>
+  <script>
+    (async function(){
+      try {
+        let key = '';
+        try {
+          const res = await fetch('../config/config.json', { cache: 'no-store' });
+          if (res.ok) { const cfg = await res.json(); key = cfg.googleMapsApiKey || ''; }
+        } catch {}
+        if (!key && window.APP_CFG && window.APP_CFG.googleMapsApiKey) key = window.APP_CFG.googleMapsApiKey;
+        if (!key) { console.warn('Maps API key not found. Place one in config/config.json or window.APP_CFG.'); return; }
+        const s = document.createElement('script');
+        s.async = true; s.defer = true;
+        s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=initMap`;
+        document.body.appendChild(s);
+      } catch(e) { console.error('Failed to load Google Maps', e); }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dispatch Center - Dashboard</title>
+    <link rel="stylesheet" href="css/index.css" />
+  <!-- Prevent caching of protected page in browser -->
+  <meta http-equiv="cache-control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="0">
+
+</head>
+<body>
+    <header class="topbar" role="banner">
+        <div class="brand" aria-label="Dispatch Center home">
+            <span class="logo" aria-hidden="true"></span>
+            <span>Home</span>
+        </div>
+        <div class="topbar-actions">
+            <label class="search" aria-label="Global search">
+            </label>
+            <a class="btn btn-primary" href="html/employees.html" aria-label="Open Employees">Employees</a>
+            <a class="btn btn-primary" href="html/dispatch.html" aria-label="Open Dispatch">Dispatch</a>
+            <button id="signout-btn" class="btn btn-danger-outline" aria-label="Sign out">Sign out</button>
+        </div>
+    </header>
+
+
+
+    <main id="app" role="main" aria-live="polite">
+        <!-- Error message container -->
+        <div id="error-message" class="error-message" style="display: none; background: #fee; border: 1px solid #fcc; padding: 12px; border-radius: 8px; color: #c33; margin-bottom: 16px;"></div>
+        
+        <!-- KPI Dashboard using your existing CSS classes -->
+        <div class="kpis">
+            <div class="card">
+                <div class="kpi">
+                    <div>
+                        <h3>Total Employees</h3>
+                        <div class="value" id="total-employees">0</div>
+                    </div>
+                    <div class="meta">
+                        <span class="pill"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="kpi">
+                    <div>
+                        <h3>Active Dispatches</h3>
+                        <div class="value" id="active-dispatches">0</div>
+                    </div>
+                    <div class="meta">
+                        <span class="pill"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="kpi">
+                    <div>
+                        <h3>Upcoming Dispatches</h3>
+                        <div class="value" id="upcoming-dispatches">0</div>
+                    </div>
+                    <div class="meta">
+                        <span class="pill"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main content grid using your existing CSS -->
+        <div class="grid">
+            <div class="card upcoming-dispatches-card">
+                <h3>Upcoming Dispatches (Next 96 Hours)</h3>
+                <div class="list" id="upcoming-dispatches-list">
+                    <p class="activity">No upcoming dispatches</p>
+                </div>
+            </div>
+            
+            <div class="card dispatch-map-card">
+                <h3>Dispatch</h3>
+                <div class="map-container">
+                    <div class="map-mini" id="dispatch-map">
+                        <!-- Google Map will be loaded here -->
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f8f9fa; border-radius: 8px; color: #666;">
+                            <p>Loading map...</p>
+                        </div>
+                    </div>
+                    <a class="btn btn-blue map-open view-full-map-btn" href="html/dispatch.html" id="view-full-map">View Full Map</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity - Smaller box below -->
+        <div class="recent-activity-section">
+            <div class="card recent-activity-card">
+                <h3>Recent Activity</h3>
+                <div class="list" id="recent-activity">
+                    <p class="activity">No recent activity</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; <span id="year">2024</span> Dispatch Center. All rights reserved.</p>
+        </footer>
+    </main>
+
+        <!-- JavaScript will dynamically load Google Maps with API key from config.json -->
+        <script src="js/index.js"></script>
+        <script>
+            // Seed a minimal session before navigating to Dispatch so it won't redirect
+            document.addEventListener('DOMContentLoaded', function(){
+                function seedSession(){
+                    try { sessionStorage.setItem('SESSION', JSON.stringify({ user: { name: 'Local User' }, lastActivity: Date.now() })); } catch(e) {}
+                }
+                var links = document.querySelectorAll('a[href="html/dispatch.html"], #view-full-map[href]');
+                links.forEach(function(a){ a.addEventListener('click', seedSession); });
+            });
+        </script>
+</body>
+</html>

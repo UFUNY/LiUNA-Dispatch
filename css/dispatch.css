@@ -1,0 +1,618 @@
+/* Dispatch Center Application Styles */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #f5f5f5;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Sidebar Styles */
+#sidebar {
+  width: 65%;
+  min-width: 40%;
+  max-width: 65%;
+  background: white;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  resize: horizontal;
+}
+
+/* Resizer Styles */
+#resizer {
+  width: 8px;
+  background: #e0e0e0;
+  cursor: col-resize;
+  position: relative;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+#resizer:hover {
+  background: #007bff;
+}
+
+#resizer:active {
+  background: #0056b3;
+}
+
+#resizer::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 20px;
+  background: #999;
+  border-radius: 1px;
+}
+
+#resizer:hover::before {
+  background: white;
+}
+
+#top-bar {
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+}
+
+#home-btn {
+  background: rgba(0,123,255,0.12) !important;
+  color: #007bff !important;
+  border: 2px solid #007bff !important;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+  transition: background-color .15s ease, box-shadow .15s ease, transform .05s ease;
+}
+
+#home-btn:hover {
+  background: rgba(0,123,255,0.2) !important;
+  box-shadow: 0 2px 8px rgba(0,123,255,0.15);
+}
+
+#controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+#search {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+#add-btn {
+  background: rgba(40,167,69,0.12) !important;
+  color: #28a745 !important;
+  border: 2px solid #28a745 !important;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  transition: background-color .15s ease, box-shadow .15s ease, transform .05s ease;
+}
+
+#add-btn:hover {
+  background: rgba(40,167,69,0.2) !important;
+  box-shadow: 0 2px 8px rgba(40,167,69,0.15);
+}
+
+/* Job Lists Container */
+#job-lists-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+/* Job Section Styles */
+.job-section {
+  margin-bottom: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.job-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 8px 8px 0 0;
+}
+
+.job-section-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  flex: 1;
+}
+
+.job-section-header .header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.job-section-header:hover {
+  background: #e9ecef;
+}
+
+.job-count {
+  background: #6c757d;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 20px;
+  text-align: center;
+}
+
+.job-section.active .job-count {
+  background: #28a745;
+}
+
+.job-section.inactive .job-count {
+  background: #dc3545;
+}
+
+.dropdown-arrow {
+  font-size: 12px;
+  color: #666;
+  transition: transform 0.2s ease;
+}
+
+.job-section.collapsed .dropdown-arrow {
+  transform: rotate(-90deg);
+}
+
+.job-section-content {
+  max-height: 400px;
+  overflow-y: auto;
+  transition: max-height 0.3s ease;
+}
+
+/* Make Active jobs dropdown taller */
+.job-section.active .job-section-content {
+  max-height: 70vh;
+}
+
+.job-section.collapsed .job-section-content {
+  max-height: 0;
+  overflow: hidden;
+}
+
+/* Day headers inside Active jobs grouping */
+.day-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #fff;
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Job List Styles */
+#job-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.job-item {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin: 0.5rem;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.job-item:hover {
+  border-color: #007bff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transform: translateY(-1px);
+}
+
+.job-name {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.job-meta {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Job Details Styles */
+#job-details {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.details-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+#back-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+#back-btn:hover {
+  background: #545b62;
+}
+
+#job-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.details-content {
+  margin-bottom: 2rem;
+}
+
+.detail-item {
+  margin-bottom: 1.5rem;
+}
+
+.detail-item label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.detail-item input,
+.detail-item textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.detail-item textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.details-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+#save-job-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#save-job-btn:hover {
+  background: #0056b3;
+}
+
+#delete-job-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#delete-job-btn:hover {
+  background: #c82333;
+}
+
+/* Notification Styles */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: 4px;
+  color: white;
+  font-weight: 500;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.notification.success {
+  background: #28a745;
+}
+
+.notification.error {
+  background: #dc3545;
+}
+
+.notification.info {
+  background: #17a2b8;
+}
+
+/* Map Styles */
+#map {
+  flex: 1;
+  min-width: 35%;
+  height: 100vh;
+}
+
+/* Form Styles */
+#new-job-form {
+  margin: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Unified outlined button variants for Dispatch */
+.btn-outline-base {
+  border-radius: 6px !important;
+  border-width: 2px !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  transition: background-color .15s ease, box-shadow .15s ease, transform .05s ease;
+}
+
+/* Green variant (Success) */
+#add-employee-btn,
+#add-employee-edit-btn,
+#set-active-btn {
+  background: rgba(40,167,69,0.12) !important;
+  color: #28a745 !important;
+  border: 2px solid #28a745 !important;
+  border-radius: 6px !important;
+}
+#add-employee-btn:hover,
+#add-employee-edit-btn:hover,
+#set-active-btn:hover {
+  background: rgba(40,167,69,0.2) !important;
+  box-shadow: 0 2px 8px rgba(40,167,69,0.15);
+}
+
+/* Blue variant (Primary) */
+#create-job-btn,
+#save-job-btn {
+  background: rgba(0,123,255,0.12) !important;
+  color: #007bff !important;
+  border: 2px solid #007bff !important;
+  border-radius: 6px !important;
+}
+#create-job-btn:hover,
+#save-job-btn:hover {
+  background: rgba(0,123,255,0.2) !important;
+  box-shadow: 0 2px 8px rgba(0,123,255,0.15);
+}
+
+/* Red variant (Danger) */
+#exit-form-btn,
+#set-inactive-btn,
+#delete-job-btn {
+  background: rgba(220,53,69,0.12) !important;
+  color: #dc3545 !important;
+  border: 2px solid #dc3545 !important;
+  border-radius: 6px !important;
+}
+#exit-form-btn:hover,
+#set-inactive-btn:hover,
+#delete-job-btn:hover {
+  background: rgba(220,53,69,0.2) !important;
+  box-shadow: 0 2px 8px rgba(220,53,69,0.15);
+}
+
+/* Gray variant (Secondary) */
+#cancel-job-btn,
+#employee-picker-close {
+  background: rgba(108,117,125,0.12) !important;
+  color: #6c757d !important;
+  border: 2px solid #6c757d !important;
+  border-radius: 6px !important;
+}
+#cancel-job-btn:hover,
+#employee-picker-close:hover {
+  background: rgba(108,117,125,0.2) !important;
+  box-shadow: 0 2px 8px rgba(108,117,125,0.15);
+}
+
+/* Normalize generic status buttons to outlined look */
+.status-btn {
+  border: 2px solid currentColor !important;
+  border-radius: 6px !important;
+  color: inherit;
+}
+.status-btn.active {
+  color: #28a745 !important;
+  background: rgba(40,167,69,0.12) !important;
+}
+.status-btn.inactive {
+  color: #dc3545 !important;
+  background: rgba(220,53,69,0.12) !important;
+}
+
+/* Employee List Styles */
+#employees-list {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 0.75rem;
+  min-height: 60px;
+}
+
+.employees-display {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 0.75rem;
+  min-height: 60px;
+}
+
+.employee-display-item {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.employee-display-item:last-child {
+  margin-bottom: 0;
+}
+
+.employee-display-item .employee-name {
+  flex: 1;
+}
+
+.employee-display-item .remove-employee {
+  transition: all 0.2s ease;
+}
+
+.employee-display-item .remove-employee:hover {
+  background: #c82333 !important;
+  transform: scale(1.05);
+}
+
+.employee-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.employee-item:last-child {
+  margin-bottom: 0;
+}
+
+.employee-name {
+  font-weight: 500;
+}
+
+.remove-employee {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.remove-employee:hover {
+  background: #c82333;
+}
+
+/* Status Button Styles */
+.status-btn {
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.status-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.status-btn.active {
+  background: #28a745 !important;
+}
+
+.status-btn.inactive {
+  background: #dc3545 !important;
+}
+
+/* Job Time Display */
+.job-time {
+  font-size: 12px;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+/* Status Indicator */
+.status-indicator {
+  transition: all 0.2s ease;
+}
+
+.status-indicator:hover {
+  transform: scale(1.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #sidebar {
+    width: 100%;
+    max-width: none;
+    min-width: auto;
+  }
+  
+  #container {
+    flex-direction: column;
+  }
+  
+  #resizer {
+    display: none;
+  }
+  
+  #map {
+    height: 50vh;
+    min-width: auto;
+  }
+}

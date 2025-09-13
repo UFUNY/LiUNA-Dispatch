@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dispatch Center - Employees</title>
+  <link rel="stylesheet" href="../css/employees.css" />
+  <!-- Prevent caching of protected page in browser -->
+  <meta http-equiv="cache-control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  <script defer src="../js/employees.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+  <a href="../index.html" class="btn home-btn">Home</a>
+      <h1 class="title">Employee Directory</h1>
+      <button id="add-employee" class="btn btn-add">Add Employee</button>
+    </div>
+  </header>
+
+  <main id="app">
+    <div class="content-wrapper">
+      <aside class="filters-panel">
+        <h2>Filters</h2>
+        <div class="filter-group">
+          <h3>Classification</h3>
+          <div id="classification-filters" class="filter-options"></div>
+        </div>
+        <div class="filter-group">
+          <h3>Skills</h3>
+          <div id="skills-filters" class="filter-options"></div>
+        </div>
+        <div class="filter-group">
+          <h3>Certifications</h3>
+          <div id="cert-filters" class="filter-options"></div>
+        </div>
+        <div class="filter-group status-filter">
+          <h3>Status</h3>
+          <div id="status-filters" class="filter-options">
+            <label class="filter-option"><input type="checkbox" value="active" checked> <span>Active</span></label>
+            <label class="filter-option"><input type="checkbox" value="inactive"> <span>Inactive</span></label>
+          </div>
+        </div>
+      </aside>
+
+      <div class="employees-container">
+        <div id="employees-list" class="employees-list"></div>
+      </div>
+
+      <aside id="employee-detail" class="employee-detail-panel">
+        <div class="panel-header">
+          <h2 id="detail-employee-name">Employee Details</h2>
+          <button id="close-detail" class="btn-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="panel-tabs">
+          <button class="tab-btn active" data-tab="overview">Overview</button>
+          <button class="tab-btn" data-tab="certs">Certs</button>
+          <button class="tab-btn" data-tab="skills">Skills</button>
+          <button class="tab-btn" data-tab="about">About</button>
+        </div>
+        <div class="panel-content">
+          <div id="overview-tab" class="tab-content active">
+            <div class="form-group"><label for="edit-name">Name</label><input id="edit-name" class="form-control"/></div>
+            <div class="form-group"><label for="edit-classification">Classification</label><select id="edit-classification" class="form-control"></select></div>
+            <div class="form-group"><label for="edit-status">Status</label><select id="edit-status" class="form-control"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+            <div class="form-group"><label>Can't Work On</label><div class="weekday-selector">
+              <button class="weekday-btn" data-day="Sunday">Sun</button>
+              <button class="weekday-btn" data-day="Monday">Mon</button>
+              <button class="weekday-btn" data-day="Tuesday">Tue</button>
+              <button class="weekday-btn" data-day="Wednesday">Wed</button>
+              <button class="weekday-btn" data-day="Thursday">Thu</button>
+              <button class="weekday-btn" data-day="Friday">Fri</button>
+              <button class="weekday-btn" data-day="Saturday">Sat</button>
+            </div></div>
+          </div>
+          <div id="certs-tab" class="tab-content">
+            <div id="employee-certs" class="certs-list"></div>
+            <div class="form-group">
+              <input id="new-cert-name" class="form-control" placeholder="Certification name"/>
+              <div class="date-group"><label>Start Date</label><input id="new-cert-start" type="date" class="form-control"/></div>
+              <div class="date-group"><label>End Date</label><input id="new-cert-end" type="date" class="form-control"/></div>
+              <button id="add-cert" class="btn">Add Certification</button>
+            </div>
+          </div>
+          <div id="skills-tab" class="tab-content">
+            <div id="employee-skills" class="skills-list"></div>
+            <div class="form-group"><input id="new-skill" class="form-control" placeholder="Enter new skill"/><button id="add-skill" class="btn">Add Skill</button></div>
+          </div>
+          <div id="about-tab" class="tab-content">
+            <div class="form-group"><label for="edit-email">Email</label><input id="edit-email" type="email" class="form-control"/></div>
+            <div class="form-group"><label for="edit-phone">Phone</label><input id="edit-phone" type="tel" class="form-control"/></div>
+            <div class="form-group"><label for="edit-address">Address</label><input id="edit-address" class="form-control"/></div>
+            <div class="form-group"><label>Emergency Contact</label>
+              <input id="emergency-name" class="form-control" placeholder="Name"/>
+              <input id="emergency-phone" class="form-control" placeholder="Phone"/>
+              <input id="emergency-relation" class="form-control" placeholder="Relation"/>
+            </div>
+          </div>
+        </div>
+        <div class="panel-footer">
+          <button id="save-employee" class="btn btn-primary">Save Changes</button>
+          <button id="delete-employee" class="btn btn-danger">Delete Employee</button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Add Employee Modal -->
+  <div id="add-employee-modal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add New Employee</h2>
+        <button class="close-modal" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group"><label for="new-employee-name">Name</label><input id="new-employee-name" class="form-control" required/></div>
+        <div class="form-group"><label for="new-employee-classification">Classification</label><select id="new-employee-classification" class="form-control" required></select></div>
+        <div class="form-group"><label for="new-employee-email">Email</label><input id="new-employee-email" type="email" class="form-control"/></div>
+        <div class="form-group"><label for="new-employee-phone">Phone</label><input id="new-employee-phone" type="tel" class="form-control"/></div>
+        <div class="form-group"><label for="new-employee-address">Address</label><input id="new-employee-address" class="form-control"/></div>
+        <div class="form-group"><label for="new-employee-status">Status</label><select id="new-employee-status" class="form-control"><option value="active" selected>Active</option><option value="inactive">Inactive</option></select></div>
+      </div>
+      <div class="modal-footer">
+        <button id="create-employee" class="btn btn-primary">Create Employee</button>
+        <button class="btn cancel-modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-backdrop" class="modal-backdrop"></div>
+</body>
+</html>

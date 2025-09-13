@@ -1,0 +1,659 @@
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1e40af;
+  --primary-light: #dbeafe;
+  --success: #10b981;
+  --success-dark: #059669;
+  --success-light: #d1fae5;
+  --danger: #ef4444;
+  --danger-dark: #dc2626;
+  --danger-light: #fee2e2;
+  --warning: #f59e0b;
+  --warning-dark: #d97706;
+  --warning-light: #fef3c7;
+  --border: #e5e7eb;
+  --bg: #ffffff;
+  --bg-subtle: #f9fafb;
+  --bg-dark: #f3f4f6;
+  --text: #111827;
+  --text-light: #374151;
+  --text-muted: #6b7280;
+  --shadow: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-lg: 0 4px 6px rgba(0,0,0,0.1);
+  --rounded: 8px;
+  --transition: all 0.2s ease;
+
+  /* Classification colors */
+  --class-APP: #10b981;  /* Green for APPs */
+  --class-JM: #2563eb;   /* Blue for JMs */
+  --class-FM: #f59e0b;   /* Orange for FMs */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background-color: var(--bg-subtle);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Top navigation bar */
+.topbar {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--bg);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--rounded);
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid transparent;
+}
+
+.home-btn {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  border-color: var(--primary);
+}
+
+.home-btn:hover {
+  background-color: var(--primary-dark);
+  color: white;
+}
+
+.btn-add {
+  background-color: var(--success-light);
+  color: var(--success-dark);
+  border-color: var(--success);
+}
+
+.btn-add:hover {
+  background-color: var(--success-dark);
+  color: white;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn-danger {
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border-color: var(--danger);
+}
+
+.btn-danger:hover {
+  background-color: var(--danger);
+  color: white;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+/* Main layout */
+#app {
+  max-width: 100%;
+  padding: 1rem 1rem 1rem 1rem;
+}
+
+.content-wrapper {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 1.5rem;
+  position: relative;
+  transition: grid-template-columns 0.3s ease;
+}
+
+/* Add this for when detail panel is open */
+.content-wrapper.detail-open {
+  grid-template-columns: 220px 1fr;
+}
+
+/* Filters panel */
+.filters-panel {
+  background-color: var(--bg);
+  border-radius: var(--rounded);
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 1rem;
+  height: fit-content;
+  margin-left: 0;
+}
+
+.filter-group {
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--rounded);
+  overflow: hidden;
+}
+
+.filter-group h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  color: var(--text-light);
+  background-color: var(--bg-dark);
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.collapse-arrow {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.filter-group.collapsed .collapse-arrow {
+  transform: rotate(-90deg);
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.filter-group.collapsed .filter-options {
+  max-height: 0;
+  padding: 0 1rem;
+  overflow: hidden;
+}
+
+/* Employees grid */
+.employees-container {
+  padding: 0.5rem;
+}
+
+.employees-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+/* Add this for when detail panel is open */
+.detail-open .employees-list {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Employee card */
+.employee-card {
+  background-color: var(--bg);
+  border-radius: var(--rounded);
+  box-shadow: var(--shadow);
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid var(--border);
+  min-height: 220px;
+}
+
+.employee-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.employee-card.flash {
+  box-shadow: 0 0 0 3px var(--primary-light), 0 8px 18px rgba(0,0,0,0.15);
+  transition: box-shadow 0.2s ease;
+}
+
+.employee-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.employee-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--bg-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.employee-info {
+  flex: 1;
+}
+
+.employee-name {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.employee-status {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.status-active {
+  background-color: var(--success-light);
+  color: var(--success-dark);
+}
+
+.status-inactive {
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+}
+
+.employee-meta {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.employee-meta div {
+  margin-bottom: 0.25rem;
+}
+
+.classification-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.employee-skills, .employee-certs {
+  margin-top: 0.75rem;
+}
+
+.employee-skills h4, .employee-certs h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-light);
+}
+
+.skill-tags, .cert-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill-tag, .cert-tag {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.more-indicator {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* Detail panel */
+.employee-detail-panel {
+  background-color: var(--bg);
+  border-radius: var(--rounded) 0 0 var(--rounded);
+  box-shadow: var(--shadow-lg);
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 450px;
+  height: 100vh;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  /* FIX: Ensure panel is above cards but below modal backdrop */
+  z-index: 1000; 
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.employee-detail-panel.open {
+  transform: translateX(0);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.tab-btn {
+  padding: 0.75rem 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+}
+
+.tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.panel-footer {
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* Form elements */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--text-light);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--rounded);
+  font-size: 0.875rem;
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.date-group {
+  margin-bottom: 0.5rem;
+}
+
+.weekday-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.weekday-btn {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--rounded);
+  background-color: var(--bg);
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.weekday-btn.selected {
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  border-color: var(--danger);
+}
+
+/* Skills & Certs */
+.skills-list, .certs-list {
+  margin-bottom: 1rem;
+}
+
+.skill-item, .cert-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.cert-item {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.cert-dates {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.cert-actions, .skill-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-remove {
+  color: var(--danger);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+  display: none;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--bg);
+  border-radius: var(--rounded);
+  box-shadow: var(--shadow-lg);
+  z-index: 1002;
+  max-width: 500px;
+  width: 90%;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.modal.open {
+  display: block;
+  opacity: 1;
+}
+
+.modal-backdrop.open {
+  display: block;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 1rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Classification color badges */
+.classification-APP {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--class-APP);
+  border: 1px solid var(--class-APP);
+}
+
+.classification-JM {
+  background-color: rgba(37, 99, 235, 0.1);
+  color: var(--class-JM);
+  border: 1px solid var(--class-JM);
+}
+
+.classification-FM {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--class-FM);
+  border: 1px solid var(--class-FM);
+}
+
+/* Can't work indicators on card */
+.cant-work-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.cant-work-day {
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+  padding: 0.15rem 0.35rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .employees-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .detail-open .employees-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .employees-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .detail-open .employees-list {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  
+  .content-wrapper {
+    grid-template-columns: 180px 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    grid-template-columns: 1fr;
+  }
+  
+  .filters-panel {
+    position: static;
+    margin-bottom: 1rem;
+  }
+  
+  .employees-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Classification color badges for apprentice levels */
+.classification-APP-1,
+.classification-APP-2, 
+.classification-APP-3,
+.classification-APP-4,
+.classification-APP-5,
+.classification-APP-6 {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--class-APP);
+  border: 1px solid var(--class-APP);
+}
